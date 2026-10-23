@@ -109,6 +109,7 @@ header {
   padding: 1%;
 }
 .section-title{
+  font-size: 30px;
   font-family: 'Manrope';
   font-weight: 700;
 }
@@ -171,6 +172,62 @@ header {
   font-size: 15px;
   padding: 10px 20px;
 }
+.second-btn:hover{
+  filter: brightness(98%);
+}
 .main-btn:hover {
   background: var(--color-accent);
 }
+
+.title{
+  margin-bottom: 30px;
+}
+
+.categories-section {
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.categories-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.categories-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 28px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--color-cards);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(23, 37, 84, 0.06);
+  transition: all .3s ease-in-out;
+}
+
+.categories-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(65, 105, 245, 0.15);
+  border-color: var(--color-accent);
+}
+
+.categories-card img {
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.categories-card p {
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.categories-card .second-text {
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--color-darker);
+}
+

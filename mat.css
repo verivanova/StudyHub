@@ -15,8 +15,9 @@ body {
     line-height: 1.6;
 }
 
-.header {
-    background: #fff;
+header {
+    background: #ffffffa0;
+    backdrop-filter: blur(2px);
     border-bottom: 1px solid #e8e8f0;
     padding: 0 40px;
     height: 64px;
@@ -30,8 +31,6 @@ body {
 
 .header-left {
     display: flex;
-    align-items: center;
-    gap: 40px;
 }
 
 .logo {
@@ -43,36 +42,8 @@ body {
     width: 100%;
 }
 
-.nav {
-    display: flex;
-    gap: 32px;
-}
-
-.nav a {
-    text-decoration: none;
-    color: #6b7280;
-    font-size: 15px;
-    font-weight: 500;
-    transition: color 0.2s;
-}
-
-.nav a:hover {
-    color: #1a1a2e;
-}
-
 .header-right {
     display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.search-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    color: #6b7280;
-    font-size: 18px;
 }
 
 .btn-login {
@@ -83,22 +54,6 @@ body {
     font-weight: 500;
     cursor: pointer;
     padding: 8px 16px;
-}
-
-.btn-register {
-    background: #5b6bfa;
-    color: #fff;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-register:hover {
-    background: #4a5ae6;
 }
 
 .main {

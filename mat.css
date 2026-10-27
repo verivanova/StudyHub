@@ -218,6 +218,10 @@ body {
     color: #9ca3af;
 }
 
+.ssylka{
+    width: fit-content;;
+}
+
 .btn-primary {
     display: inline-flex;
     align-items: center;

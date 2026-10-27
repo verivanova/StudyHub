@@ -354,6 +354,19 @@ header {
     opacity: 0.8;
 }
 
+.logo-center{
+    display: flex;
+    justify-content: center;
+}
+.logo-center a{
+    height: 140px;
+    width: 140px;
+}
+.logo-center img{
+    height: 100%;
+    width: 100%;
+}
+
 @media (max-width: 768px) {
     .header {
         padding: 0 16px;

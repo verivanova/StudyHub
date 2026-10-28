@@ -165,13 +165,13 @@ header {
   border-radius: 8px;
 }
 .second-btn{
-  border: 0.8px solid var(--color-darker);
-  border-radius: 8px;
-  background-color: #fff;
-  font-family: 'Manrope';
-  font-weight: 600;
-  font-size: 15px;
-  padding: 10px 20px;
+    background: none;
+    border: none;
+    color: #1a1a2e;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 16px;
 }
 .second-btn:hover{
   filter: brightness(98%);
@@ -208,6 +208,22 @@ header {
   background: #fff;
   box-shadow: 0 2px 8px rgba(23, 37, 84, 0.06);
   transition: all .3s ease-in-out;
+}
+
+.adm-btn{
+  background: #4d88ff; 
+  color: white; 
+  border: none; 
+  padding: 6px; 
+  border-radius: 5px; 
+  cursor: pointer; 
+  position: static; 
+  font-size: 14px;
+}
+
+.img-container{
+  height: 200px;
+  width: 365px;
 }
 
 .categories-card:hover {
@@ -367,5 +383,4 @@ footer hr{
 .footer-right svg{
   width: 30px;
   height: 30px;
-  color: var(--color-dark);
-}
+  color: var(--color-dark);

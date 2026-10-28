@@ -106,17 +106,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isAdmin) {
                 adminButtons = `
                     <div style="margin-top: 15px; display: flex; gap: 10px; width: 100%;">
-                        <button onclick="editMaterial('${m.id}')" style="background: #4169F5; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; position: static; font-size: 14px;">✏️ Ред.</button>
-                        <button onclick="deleteMaterial('${m.id}')" style="background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; position: static; font-size: 14px;">🗑️ Удалить</button>
+                        <button onclick="editMaterial('${m.id}')" style="background: #dfe6ff; color: black; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; position: static; font-size: 14px;">Редактировать</button>
+                        <button onclick="deleteMaterial('${m.id}')" style="background: #ffe2e2; color: black; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; position: static; font-size: 14px;">Удалить</button>
                     </div>
                 `;
             }
 
             card.innerHTML = `
-                <img src="${m.img}" alt="${m.title}" style="object-fit: cover;">
+                <div class="img-container">
+                <img src="${m.img}" alt="${m.title}" style="height: 100%;">
+                </div>
                 <p class="category-icon ${m.category}">${m.categoryName}</p>
                 <p>${m.title}</p>
-                <p class="second-text">${m.desc}</p>
+                <p class="second-text" style=" width: 350px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${m.desc}</p>
                 <button onclick="window.location.href='material.html'" class="main-btn" style="position: relative; left: 85%; border-radius: 50%; padding: 8px 12px; font-size: 20px;">⭢</button>
                 ${adminButtons}
             `;

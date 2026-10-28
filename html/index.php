@@ -1,6 +1,36 @@
 <?php
 require_once __DIR__ . '/../php/db.php';
 
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'search') {
+    header('Content-Type: application/json; charset=utf-8');
+
+    $q = trim($_GET['q'] ?? '');
+
+    if (mb_strlen($q) < 2) {
+        echo json_encode([], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $searchStmt = $pdo->prepare("
+        SELECT id, title
+        FROM materials
+        WHERE title LIKE :q
+          OR description LIKE :q
+        ORDER BY title
+        LIMIT 6
+    ");
+
+    $searchStmt->execute([
+        'q' => '%' . $q . '%'
+    ]);
+
+    echo json_encode(
+        $searchStmt->fetchAll(PDO::FETCH_ASSOC),
+        JSON_UNESCAPED_UNICODE
+    );
+    exit;
+}
+
 $sql = "
     SELECT
         materials.id,
@@ -50,8 +80,8 @@ function e($value) {
 
       <nav class="header-nav">
         <ul class="header-list">
-          <li><a href="index.html" class="header-link">Главная</a></li>
-          <li><a href="#" class="header-link">Материалы</a></li>
+          <li><a href="#" class="header-link">Главная</a></li>
+          <li><a href="/html/materials.php" class="header-link">Материалы</a></li>
           <li><a href="#categories" class="header-link">Категории</a></li>
         </ul>
       </nav>
@@ -64,7 +94,6 @@ function e($value) {
           </svg>
         </a>
         <button class="second-btn">Войти</button>
-        <button class="main-btn">Регистрация</button>
       </div>
 
     </div>
@@ -75,56 +104,86 @@ function e($value) {
       <h1 class="section-title">Учебные материалы для твоего успеха</h1>
       <p class="second-text">Конспекты, учебники, видеоуроки и многое другое — всё, что нужно для учёбы, в одном месте
       </p>
-      <div class="search-block">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search"
-          viewBox="0 0 16 16">
-          <path
-            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-        </svg>
+      
+      <div class="search-block" id="search-box">
+    <svg xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      aria-hidden="true">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+    </svg>
 
-        <input type="text" class="search-input" placeholder="Поиск материалов...">
+    <input
+        type="search"
+        class="search-input"
+        id="material-search"
+        placeholder="Поиск материалов..."
+        autocomplete="off"
+        aria-label="Поиск учебных материалов"
+        aria-controls="search-suggestions"
+        aria-expanded="false"
+    >
 
-        <button class="main-btn" type="button">Найти</button>
+    <button class="main-btn" id="search-button" type="button">
+        Найти
+    </button>
+
+    <div class="search-suggestions"
+      id="search-suggestions"
+      role="listbox"
+      hidden>
+    </div>
       </div>
     </div>
 
-    <div class="categories-section section" id="categories">
-      <p class="section-title title">Категории</p>
-      <div class="categories-list">
-        <div class="categories-card">
-          <img src="/pic/studyhub_assets/icon-code.png" alt="иконка">
-          <p>Программирование</p>
-          <p class="second-text">8 материалов</p>
-        </div>
-        <div class="categories-card">
-          <img src="/pic/studyhub_assets/icon-calculator.png" alt="иконка">
-          <p>Математика</p>
-          <p class="second-text">6 материалов</p>
-        </div>
-        <div class="categories-card">
-          <img src="/pic/studyhub_assets/icon-language.png" alt="иконка">
-          <p>Иностранные языки</p>
-          <p class="second-text">4 материала</p>
-        </div>
-        <div class="categories-card">
-          <img src="/pic/studyhub_assets/icon-analytics.png" alt="иконка">
-          <p>Экономика</p>
-          <p class="second-text">2 материала</p>
-        </div>
-        <div class="categories-card">
-          <img src="/pic/studyhub_assets/icon-book.png" alt="иконка">
-          <p>Другое</p>
-          <p class="second-text">2 материала</p>
-        </div>
-      </div>
+
+<div class="categories-section section" id="categories">
+    <p class="section-title title">Категории</p>
+    
+    <div class="categories-list">
+
+        <a href="/html/materials.php?category=Программирование" class="categories-card">
+            <img src="/pic/studyhub_assets/icon-code.png" alt="Иконка программирования">
+            <p>Программирование</p>
+            <p class="second-text">Материалы по программированию</p>
+        </a>
+
+        <a href="/html/materials.php?category=Математика" class="categories-card">
+            <img src="/pic/studyhub_assets/icon-calculator.png" alt="Иконка математики">
+            <p>Математика</p>
+            <p class="second-text">Материалы по математике</p>
+        </a>
+
+        <a href="/html/materials.php?category=Иностранные%20языки" class="categories-card">
+            <img src="/pic/studyhub_assets/icon-language.png" alt="Иконка иностранных языков">
+            <p>Иностранные языки</p>
+            <p class="second-text">Материалы по языкам</p>
+        </a>
+
+        <a href="/html/materials.php?category=Экономика" class="categories-card">
+            <img src="/pic/studyhub_assets/icon-analytics.png" alt="Иконка экономики">
+            <p>Экономика</p>
+            <p class="second-text">Материалы по экономике</p>
+        </a>
+
+        <a href="/html/materials.php?category=Другое" class="categories-card">
+            <img src="/pic/studyhub_assets/icon-book.png" alt="Иконка других материалов">
+            <p>Другое</p>
+            <p class="second-text">Другие учебные материалы</p>
+        </a>
+
     </div>
+</div>
+
 
     <div class="popular-section section">
       <div class="popular-title">
         <p class="section-title title">Популярные материалы</p>
-        <a href="#">Все материалы ⭢</a>
+        <a href="/html/materials.php">Все материалы ⭢</a>
       </div>
-<div class="popular-list">
+    <div class="popular-list">
     <?php
 $images = [
     1 => '/pic/studyhub_assets/2026-10-23_17-46-25.png',
@@ -211,6 +270,110 @@ $images = [
 
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="/js/main.js"></script>
+  
+<script>
+(() => {
+    const input = document.getElementById('material-search');
+    const button = document.getElementById('search-button');
+    const list = document.getElementById('search-suggestions');
+    const box = document.getElementById('search-box');
+
+    let timer;
+    let requestId = 0;
+
+    function hideSuggestions() {
+        list.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+    }
+
+    function searchAll() {
+        const query = input.value.trim();
+
+        window.location.href = '/html/materials.php' +
+            (query ? '?q=' + encodeURIComponent(query) : '');
+    }
+
+    button.addEventListener('click', searchAll);
+
+    input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            searchAll();
+        }
+
+        if (event.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
+
+    input.addEventListener('input', () => {
+        clearTimeout(timer);
+
+        const query = input.value.trim();
+        const currentId = ++requestId;
+
+        list.replaceChildren();
+
+        if (query.length < 2) {
+            hideSuggestions();
+            return;
+        }
+
+        timer = setTimeout(async () => {
+            try {
+                const response = await fetch(
+                    '/html/index.php?ajax=search&q=' +
+                    encodeURIComponent(query)
+                );
+
+                if (!response.ok) {
+                    throw new Error('Ошибка HTTP: ' + response.status);
+                }
+
+                const results = await response.json();
+
+                if (currentId !== requestId) return;
+
+                list.replaceChildren();
+
+                if (results.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'suggestion-empty';
+                    empty.textContent = 'Ничего не найдено';
+                    list.appendChild(empty);
+                } else {
+                    results.forEach(material => {
+                        const link = document.createElement('a');
+
+                        link.className = 'suggestion-item';
+                        link.href = '/html/material.php?id=' +
+                            encodeURIComponent(material.id);
+                        link.textContent = material.title;
+                        link.setAttribute('role', 'option');
+
+                        list.appendChild(link);
+                    });
+                }
+
+                list.hidden = false;
+                input.setAttribute('aria-expanded', 'true');
+            } catch (error) {
+                hideSuggestions();
+                console.error('Ошибка поиска:', error);
+            }
+        }, 200);
+    });
+
+    document.addEventListener('click', event => {
+        if (!box.contains(event.target)) {
+            hideSuggestions();
+        }
+    });
+})();
+</script>
+</body>
+</html>
+
 </body>
 
 </html>

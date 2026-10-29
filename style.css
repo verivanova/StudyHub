@@ -383,4 +383,80 @@ footer hr{
 .footer-right svg{
   width: 30px;
   height: 30px;
-  color: var(--color-dark);
+  color: var(--color-dark);
+}
+.admin-status {
+    color: var(--color-main);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.header-right form {
+    margin: 0;
+}
+
+.header-right .second-btn {
+    cursor: pointer;
+}
+
+.admin-add-section {
+    display: flex;
+    justify-content: flex-end;
+    margin: 20px 0;
+}
+
+#open-material-form {
+    cursor: pointer;
+}
+
+
+.material-modal[hidden] {
+    display: none !important;
+}
+
+.material-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.55);
+    overflow-y: auto;
+}
+
+.material-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    border-radius: 16px;
+    background: #fff;
+    color: #222;
+}
+
+.material-modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.material-modal-content input,
+.material-modal-content textarea,
+.material-modal-content select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.modal-close {
+    display: block;
+    margin-left: auto;
+    cursor: pointer;
+}

@@ -1,4 +1,9 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isAdmin = isset($_SESSION['admin_id']);
+
 require_once __DIR__ . '/../php/db.php';
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -16,6 +21,7 @@ $sql = "
         materials.content,
         materials.features,
         materials.file_path,
+        materials.image_path,
         materials.created_at,
         categories.name AS category
     FROM materials
@@ -61,7 +67,9 @@ $images = [
     6 => '/pic/studyhub_assets/2026-10-23_18-07-15.png'
 ];
 
-$image = $images[(int)$material['id']] ?? '/pictures/html_css.png';
+$image = !empty($material['image_path'])
+    ? $material['image_path']
+    : ($images[(int)$material['id']] ?? '/pictures/html_css.png');
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -75,6 +83,7 @@ $image = $images[(int)$material['id']] ?? '/pictures/html_css.png';
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
     <link rel="stylesheet" href="/mat.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -86,7 +95,17 @@ $image = $images[(int)$material['id']] ?? '/pictures/html_css.png';
             </a>
         </div>
         <div class="header-right">
-            <button class="btn-login">Войти</button>
+        <?php if ($isAdmin): ?>
+            <span class="admin-status">Режим администратора</span>
+            <form action="/php/logout.php" method="post">
+                <button type="submit" class="second-btn">Выйти</button>
+            </form>
+        <?php else: ?>
+            <button class="second-btn"
+                    onclick="window.location.href='/html/admin-page.php'">
+                Войти
+            </button>
+        <?php endif; ?>
         </div>
     </header>
 

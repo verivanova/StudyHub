@@ -1,4 +1,9 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isAdmin = isset($_SESSION['admin_id']);
+
 require_once __DIR__ . '/../php/db.php';
 
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'search') {
@@ -37,6 +42,7 @@ $sql = "
         materials.title,
         materials.description,
         materials.file_path,
+        materials.image_path,
         categories.name AS category
     FROM materials
     JOIN categories
@@ -93,7 +99,19 @@ function e($value) {
               d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
           </svg>
         </a>
-        <button class="second-btn">Войти</button>
+
+        <?php if ($isAdmin): ?>
+            <span class="admin-status">Режим администратора</span>
+            <form action="/php/logout.php" method="post">
+                <button type="submit" class="second-btn">Выйти</button>
+            </form>
+        <?php else: ?>
+            <button class="second-btn"
+                    onclick="window.location.href='/html/admin-page.php'">
+                Войти
+            </button>
+        <?php endif; ?>
+
       </div>
 
     </div>
@@ -183,6 +201,63 @@ function e($value) {
         <p class="section-title title">Популярные материалы</p>
         <a href="/html/materials.php">Все материалы ⭢</a>
       </div>
+      <?php if ($isAdmin): ?>
+    <div class="admin-add-section">
+        <button type="button" class="main-btn" id="open-material-form">
+            + Добавить материал
+        </button>
+    </div>
+    <?php endif; ?>
+    
+<?php if ($isAdmin): ?>
+    <div id="material-modal" class="material-modal" hidden>
+        <div class="material-modal-content">
+            <button type="button" id="close-material-form" class="modal-close">
+                ✕
+            </button>
+
+            <h2 id="material-form-title">Добавить материал</h2>
+
+            <form id="material-create-form" enctype="multipart/form-data">
+                <input type="hidden" id="material-id" name="id" value="">
+                <label for="material-title">Название</label>
+                <input id="material-title" name="title" type="text"
+                       maxlength="200" required>
+
+                <label for="material-description">Краткое описание</label>
+                <textarea id="material-description" name="description"
+                          rows="3" required></textarea>
+
+                <label for="material-category">Категория</label>
+                <select id="material-category" name="category_id" required>
+                    <option value="">Выбери категорию</option>
+                    <option value="1">Программирование</option>
+                    <option value="2">Математика</option>
+                    <option value="3">Иностранные языки</option>
+                    <option value="4">Экономика</option>
+                    <option value="5">Другое</option>
+                </select>
+
+                <label for="material-content">Содержание (необязательно)</label>
+                <textarea id="material-content" name="content" rows="4"></textarea>
+
+                <label for="material-features">Что изучит пользователь (необязательно)</label>
+                <textarea id="material-features" name="features" rows="3"></textarea>
+
+                <label for="material-cover">Обложка (JPG, PNG или WebP, до 4 МБ)</label>
+                <input id="material-cover" name="cover" type="file"
+                       accept="image/jpeg,image/png,image/webp">
+
+                <p id="material-form-message" role="status"></p>
+
+                <button type="submit" class="main-btn" id="save-material-button">
+                    Сохранить материал
+                </button>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
+
     <div class="popular-list">
     <?php
 $images = [
@@ -206,8 +281,10 @@ $images = [
     <?php foreach ($materials as $index => $material): ?>
         <div class="popular-card">
           <img
-              src="<?= e($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png') ?>"
-              alt="<?= e($material['title']) ?>"
+                        src="<?= e(!empty($material['image_path'])
+            ? $material['image_path']
+            : ($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png')) ?>"
+                alt="<?= e($material['title']) ?>"
           >
 
             <p class="category-icon <?= e($categoryClasses[$material['category']] ?? 'other') ?>">
@@ -227,8 +304,8 @@ $images = [
             >⭢</button>
         </div>
     <?php endforeach; ?>
-</div>
     </div>
+</div>
 
     <div class="about-section">
       <p class="section-title">Начни учиться уже сегодня!</p>
@@ -270,6 +347,7 @@ $images = [
 
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="/js/main.js"></script>
+  <script src="/js/material-create.js"></script>
   
 <script>
 (() => {

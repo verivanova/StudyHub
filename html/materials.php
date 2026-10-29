@@ -1,5 +1,10 @@
 
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isAdmin = isset($_SESSION['admin_id']);
+
 require_once __DIR__ . '/../php/db.php';
 
 function e($value) {
@@ -24,6 +29,7 @@ $sql = "
         materials.title,
         materials.description,
         materials.file_path,
+        materials.image_path,
         categories.name AS category
     FROM materials
     JOIN categories ON materials.category_id = categories.id
@@ -83,7 +89,7 @@ $categoryClasses = [
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
-    <link rel="stylesheet" href="/html/style.css">
+    <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="/html/materials.css">
 </head>
 <body>
@@ -103,7 +109,17 @@ $categoryClasses = [
         </nav>
 
         <div class="header-right">
-          <button class="second-btn">Войти</button>
+        <?php if ($isAdmin): ?>
+            <span class="admin-status">Режим администратора</span>
+            <form action="/php/logout.php" method="post">
+                <button type="submit" class="second-btn">Выйти</button>
+            </form>
+        <?php else: ?>
+            <button class="second-btn"
+                    onclick="window.location.href='/html/admin-page.php'">
+                Войти
+            </button>
+        <?php endif; ?>
         </div>
     </div>
 </header>
@@ -164,8 +180,10 @@ $categoryClasses = [
                 <?php foreach ($materials as $material): ?>
                     <article class="popular-card">
                         <img
-                            src="<?= e($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png') ?>"
-                            alt="<?= e($material['title']) ?>"
+                            src="<?= e(!empty($material['image_path'])
+                                ? $material['image_path']
+                                : ($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png')) ?>" 
+                                alt="<?= e($material['title']) ?>"
                         >
 
                         <p class="category-icon <?= e($categoryClasses[$material['category']] ?? 'other') ?>">

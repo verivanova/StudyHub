@@ -151,3 +151,15 @@ vite.config.ts.timestamp-*
 # StudyHub: конфигурация подключения к базе данных
 /php/db.php
 /php/db_hosting.php
+
+# Пользовательские загрузки
+/uploads/*
+!/uploads/.gitkeep
+
+# Временные файлы
+*.tmp
+*.log
+
+# Системные файлы Windows
+Thumbs.db
+desktop.ini

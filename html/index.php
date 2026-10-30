@@ -332,7 +332,7 @@ $images = [
     <div class="about-section">
       <p class="section-title">Начни учиться уже сегодня!</p>
       <p>Сотни полезных материалов ждут тебя. <br> Выбери категорию и найти то, что нужно именно тебе</p>
-      <button class="about-btn">Перейти к материалам ⭢</button>
+      <button class="about-btn" onclick="toMaterials()">Перейти к материалам ⭢</button>
     </div>
   </main>
 

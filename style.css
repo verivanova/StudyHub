@@ -500,3 +500,268 @@ footer hr{
     background: #d94343;
     color: white;
 }
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 90px;
+    }
+
+    header {
+        height: 85px;
+    }
+
+    .header-inner {
+        grid-template-columns: auto 1fr;
+        padding: 0 16px;
+    }
+
+    .header-logo img {
+        width: 90px;
+    }
+
+    .header-nav {
+        display: none;
+    }
+
+    .header-right {
+        gap: 8px;
+    }
+
+    .admin-status {
+        display: none;
+    }
+
+    .hero-section {
+        padding: 90px 24px;
+        background-position: center;
+    }
+
+    .hero-section h1 {
+        font-size: 28px;
+    }
+
+    .hero-section p {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .section-title {
+        font-size: 23px;
+    }
+
+    .search-block {
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .search-input {
+        min-width: 0;
+        font-size: 14px;
+    }
+
+    .main-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .categories-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .categories-card {
+        padding: 20px 10px;
+    }
+
+    .popular-list {
+        grid-template-columns: 1fr;
+        justify-items: center;
+    }
+
+    .popular-card {
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .popular-title {
+        gap: 12px;
+        align-items: center;
+    }
+
+    .about-section {
+        padding: 60px 24px;
+    }
+
+    .about-section .section-title {
+        font-size: 22px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 24px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 65px 18px;
+    }
+
+    .hero-section h1 {
+        font-size: 24px;
+    }
+
+    .section-title {
+        font-size: 20px;
+    }
+
+    .categories-list {
+        grid-template-columns: 1fr;
+    }
+
+    .categories-card img {
+        max-width: 70px;
+    }
+
+    .popular-title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .section {
+        padding: 40px 14px;
+    }
+
+    .search-block {
+        flex-wrap: wrap;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .search-block .main-btn {
+        width: 100%;
+    }
+
+    .material-modal-content {
+        padding: 18px;
+    }
+}
+
+@media (min-width: 390px) and (max-width: 430px) {
+
+    body {
+        padding-top: 80px;
+    }
+
+    header {
+        height: 75px;
+    }
+
+    .header-inner {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 14px;
+        gap: 8px;
+    }
+
+    .header-logo img {
+        width: 78px;
+    }
+
+    .header-right {
+        gap: 6px;
+    }
+
+    .hero-section {
+        padding: 65px 20px;
+        background-position: center;
+    }
+
+    .hero-section h1 {
+        font-size: 25px;
+        line-height: 1.3;
+        padding: 0;
+    }
+
+    .hero-section p {
+        width: 100%;
+        font-size: 15px;
+        padding: 10px 0;
+    }
+
+    .search-block {
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: wrap;
+        margin-top: 20px;
+        padding: 12px;
+    }
+
+    .search-input {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .search-block .main-btn {
+        width: 100%;
+    }
+
+    .section {
+        padding: 40px 16px;
+    }
+
+    .section-title {
+        font-size: 21px;
+        line-height: 1.4;
+    }
+
+    .categories-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .categories-card {
+        min-width: 0;
+        padding: 18px 8px;
+        overflow-wrap: anywhere;
+    }
+
+    .categories-card p {
+        font-size: 14px;
+    }
+
+    .categories-card .second-text {
+        font-size: 12px;
+    }
+
+    .popular-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .popular-card {
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        padding: 18px;
+    }
+
+    .popular-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .about-section {
+        padding: 50px 20px;
+        margin: 20px 12px;
+    }
+
+    .footer-inner {
+        padding: 20px 12px;
+        gap: 20px;
+    }
+}

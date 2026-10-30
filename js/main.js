@@ -29,3 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function toMaterials(){
+    window.location.href="/html/materials.php"
+}

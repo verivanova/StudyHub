@@ -1,10 +1,10 @@
 'use strict'
 const lenis = new Lenis({
-    duration: 1.2,        // длительность "догона" в секундах
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // мягкая кривая
-    smoothWheel: true,    // плавное колёсико
-    wheelMultiplier: 1,   // множитель скорости колеса
-    touchMultiplier: 1.5, // на тач-устройствах
+    duration: 1.2,        
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+    smoothWheel: true,    
+    wheelMultiplier: 1,   
+    touchMultiplier: 1.5, 
   });
 
   function raf(time) {
@@ -12,3 +12,20 @@ const lenis = new Lenis({
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
+document.addEventListener('DOMContentLoaded', () => {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
+    
+    const loginBtn = document.querySelector('.second-btn, .btn-login');
+
+    if (isAdmin && loginBtn) {
+        loginBtn.textContent = 'Выйти';
+        
+        loginBtn.removeAttribute('onclick');
+        
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('isAdmin');
+            window.location.reload(); 
+        });
+    }
+});

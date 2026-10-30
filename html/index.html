@@ -34,13 +34,12 @@
 
       <div class="header-right">
         <a href="#" class="header-link"> <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-            fill="currentColor" class="bi bi-search header-search" viewBox="0 0 16 16">
+            fill="currentColor" class="bi bi-search header-search" style="background: none;" viewBox="0 0 16 16">
             <path
               d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
           </svg>
         </a>
-        <button class="second-btn">Войти</button>
-        <button class="main-btn">Регистрация</button>
+        <button onclick="window.location.href='/html/admin-page.html'" class="second-btn">Войти</button>
       </div>
 
     </div>
@@ -98,52 +97,11 @@
     <div class="popular-section section">
       <div class="popular-title">
         <p class="section-title title">Популярные материалы</p>
+        <a id="addMaterialBtn">+ Добавить материал</a>
         <a href="#">Все материалы ⭢</a>
       </div>
-      <div class="popular-list">
-        <div class="popular-card">  
-            <img src="../pic/studyhub_assets/2026-10-23_17-46-25.png" alt="фотография материала">
-            <p class="category-icon prog">Программирование</p>
-            <p>Основы HTML и CSS</p>
-            <p class="second-text">Краткий конспект по основам HTML и CSS для начинающих разработчиков</p>
-            <button onclick="window.location.href='/html/material.html'" class="main-btn">⭢</button>
-        </div>
-        <div class="popular-card">
-          <img src="../pic/2026-10-23_17-48-01.png" alt="фотография материала">
-          <p class="category-icon math">Математика</p>
-          <p>Высшая математика</p>
-          <p class="second-text">Сборник формул, теорем и примеров по высшей математике</p>
-          <button class="main-btn">⭢</button>
-        </div>
-        <div class="popular-card">
-          <img src="../pic/studyhub_assets/2026-10-23_17-51-21.png" alt="фотография материала">
-          <p class="category-icon lang">Иностранные языки</p>
-          <p>Английский язык. Грамматика</p>
-          <p class="second-text">Полное руководство по грамматике английского языка с примерами</p>
-          <button class="main-btn">⭢</button>
-        </div>
-        <div class="popular-card">
-          <img src="../pic/2026-10-23_17-55-52.png" alt="фотография материала">
-          <p class="category-icon prog">Программирование</p>
-          <p>JavaScript для начинающих</p>
-          <p class="second-text">Пошаговый курс по JavaScript с практическими задачами</p>
-          <button class="main-btn">⭢</button>
-        </div>
-        <div class="popular-card">
-          <img src="../pic/studyhub_assets/2026-10-23_17-59-33.png" alt="фотография материала">
-          <p class="category-icon eco">Экономика</p>
-          <p>Основы экономики</p>
-          <p class="second-text">Лекции и презентации по основам <br> экономики</p>
-          <button class="main-btn">⭢</button>
-        </div>
-        <div class="popular-card">
-          <img src="../pic/studyhub_assets/2026-10-23_18-07-15.png" alt="фотография материала">
-          <p class="category-icon other">Другое</p>
-          <p>Психология общения</p>
-          <p class="second-text">Полезные материалы по развитию коммуникативных навыков</p>
-          <button class="main-btn">⭢</button>
-        </div>
-      </div>
+      <div class="popular-list" id="materialsList">
+        
     </div>
 
     <div class="about-section">
@@ -151,6 +109,38 @@
       <p>Сотни полезных материалов ждут тебя. <br> Выбери категорию и найти то, что нужно именно тебе</p>
       <button class="about-btn">Перейти к материалам ⭢</button>
     </div>
+
+    <div id="materialModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; width: 400px; max-width: 90%;">
+            <h2 id="modalTitle" class="section-title" style="margin-bottom: 20px;">Добавить материал</h2>
+            <form id="materialForm" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" id="materialId">
+                <input type="text" id="mTitle" placeholder="Название" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <input type="text" id="mDesc" placeholder="Краткое описание" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                <select id="mCategory" required style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                    <option value="prog">Программирование</option>
+                    <option value="math">Математика</option>
+                    <option value="lang">Иностранные языки</option>
+                    <option value="eco">Экономика</option>
+                    <option value="other">Другое</option>
+                </select>
+                <div style="margin-bottom: 10px;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666;">Обложка (картинка):</label>
+                    <input type="file" id="mImgFile" accept="image/*" style="padding: 5px; border: 1px solid #ccc; border-radius: 5px; width: 100%;">
+                    <input type="hidden" id="mImgBase64"> 
+                    <div id="imgPreview" style="margin-top: 10px; display: none;">
+                        <img id="previewImg" src="" alt="Превью" style="max-height: 120px; border-radius: 5px; border: 1px solid #eee;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" class="main-btn" style="flex: 1;">Сохранить</button>
+                    <button type="button" id="closeModalBtn" class="second-btn" style="flex: 1;">Отмена</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
   </main>
 
   <footer>
@@ -186,6 +176,8 @@
 
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="../js/main.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/material-create.js"></script>
 </body>
 
 </html>

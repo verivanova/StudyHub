@@ -36,22 +36,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Подготавливаем форму для редактирования выбранного материала.
-    window.editMaterial = (material) => {
-        form.reset();
+window.editMaterial = (material) => {
+    form.reset();
 
-        materialId.value = material.id;
-        form.elements.title.value = material.title || '';
-        form.elements.description.value = material.description || '';
-        form.elements.category_id.value = String(material.category_id || '');
-        form.elements.content.value = material.content || '';
-        form.elements.features.value = material.features || '';
+    materialId.value = material.id;
+    form.elements.title.value = material.title || '';
+    form.elements.description.value = material.description || '';
+    form.elements.category_id.value = String(material.category_id || '');
+    form.elements.content.value = material.content || '';
+    form.elements.features.value = material.features || '';
 
-        formTitle.textContent = 'Редактировать материал';
-        saveButton.textContent = 'Сохранить изменения';
-        message.textContent = 'Если обложку менять не нужно, оставь поле пустым.';
-        modal.hidden = false;
-    };
+    formTitle.textContent = 'Редактировать материал';
+    saveButton.textContent = 'Сохранить изменения';
+    message.textContent = 'Если обложку менять не нужно, оставь поле пустым.';
+    modal.hidden = false;
+};
+
+document.querySelectorAll('.edit-material-button').forEach((button) => {
+    button.addEventListener('click', () => {
+        window.editMaterial({
+            id: button.dataset.id,
+            title: button.dataset.title,
+            description: button.dataset.description,
+            category_id: button.dataset.categoryId,
+            content: button.dataset.content,
+            features: button.dataset.features
+        });
+    });
+});
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();

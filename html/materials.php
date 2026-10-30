@@ -28,6 +28,9 @@ $sql = "
         materials.id,
         materials.title,
         materials.description,
+        materials.category_id,
+        materials.content,
+        materials.features,
         materials.file_path,
         materials.image_path,
         categories.name AS category
@@ -174,6 +177,13 @@ $categoryClasses = [
             <h2 class="section-title">Материалы</h2>
             <p class="second-text">Найдено: <?= count($materials) ?></p>
         </div>
+        <?php if ($isAdmin): ?>
+    <div class="admin-add-section">
+        <button type="button" class="main-btn" id="open-material-form">
+            + Добавить материал
+        </button>
+    </div>
+<?php endif; ?>
 
         <?php if ($materials): ?>
             <div class="popular-list materials-list">
@@ -207,6 +217,80 @@ $categoryClasses = [
                                 href="/html/material.php?id=<?= (int)$material['id'] ?>"
                             >Подробнее →</a>
                         <?php endif; ?>
+                        <?php if ($isAdmin): ?>
+    <div class="admin-card-actions">
+        <button
+            type="button"
+            class="admin-card-button edit-material-button"
+            data-id="<?= (int)$material['id'] ?>"
+            data-title="<?= e($material['title']) ?>"
+            data-description="<?= e($material['description']) ?>"
+            data-category-id="<?= (int)$material['category_id'] ?>"
+            data-content="<?= e($material['content'] ?? '') ?>"
+            data-features="<?= e($material['features'] ?? '') ?>"
+        >
+            Редактировать
+        </button>
+
+        <button
+            type="button"
+            class="admin-card-button delete-material-button"
+            data-id="<?= (int)$material['id'] ?>"
+            data-title="<?= e($material['title']) ?>"
+        >
+            Удалить
+        </button>
+    </div>
+<?php endif; ?>
+<?php if ($isAdmin): ?>
+    <div id="material-modal" class="material-modal" hidden>
+        <div class="material-modal-content">
+            <button type="button" id="close-material-form" class="modal-close">
+                ✕
+            </button>
+
+            <h2 id="material-form-title">Добавить материал</h2>
+
+            <form id="material-create-form" enctype="multipart/form-data">
+                <input type="hidden" id="material-id" name="id" value="">
+
+                <label for="material-title">Название</label>
+                <input id="material-title" name="title" type="text"
+                       maxlength="200" required>
+
+                <label for="material-description">Краткое описание</label>
+                <textarea id="material-description" name="description"
+                          rows="3" required></textarea>
+
+                <label for="material-category">Категория</label>
+                <select id="material-category" name="category_id" required>
+                    <option value="">Выбери категорию</option>
+                    <option value="1">Программирование</option>
+                    <option value="2">Математика</option>
+                    <option value="3">Иностранные языки</option>
+                    <option value="4">Экономика</option>
+                    <option value="5">Другое</option>
+                </select>
+
+                <label for="material-content">Содержание (необязательно)</label>
+                <textarea id="material-content" name="content" rows="4"></textarea>
+
+                <label for="material-features">Что изучит пользователь (необязательно)</label>
+                <textarea id="material-features" name="features" rows="3"></textarea>
+
+                <label for="material-cover">Обложка (JPG, PNG или WebP, до 4 МБ)</label>
+                <input id="material-cover" name="cover" type="file"
+                       accept="image/jpeg,image/png,image/webp">
+
+                <p id="material-form-message" role="status"></p>
+
+                <button type="submit" class="main-btn" id="save-material-button">
+                    Сохранить материал
+                </button>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
                     </article>
                 <?php endforeach; ?>
             </div>
@@ -236,5 +320,7 @@ $categoryClasses = [
 </footer>
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="/js/main.js"></script>
+  <script src="/js/material-create.js"></script>
+  <script src="/js/material-delete.js"></script>
 </body>
 </html>

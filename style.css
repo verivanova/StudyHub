@@ -303,7 +303,7 @@ header {
   font-size: 16px;
   font-weight: 400;
 }
-.popular-card button{
+.popular-card > button.main-btn{
   position: relative;
   left: 85%;
   border-radius: 50%;
@@ -454,9 +454,49 @@ footer hr{
     border-radius: 8px;
     font: inherit;
 }
-
 .modal-close {
     display: block;
     margin-left: auto;
     cursor: pointer;
+}
+
+.admin-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.popular-card .admin-card-button {
+    position: static;
+    left: auto;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.popular-card .edit-material-button {
+    background: #e8edff;
+    color: #4169F5;
+}
+
+.popular-card .edit-material-button:hover {
+    background: #4169F5;
+    color: white;
+}
+
+.popular-card .delete-material-button {
+    background: #ffe8e8;
+    color: #d94343;
+}
+
+.popular-card .delete-material-button:hover {
+    background: #d94343;
+    color: white;
 }

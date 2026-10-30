@@ -41,6 +41,9 @@ $sql = "
         materials.id,
         materials.title,
         materials.description,
+        materials.category_id,
+        materials.content,
+        materials.features,
         materials.file_path,
         materials.image_path,
         categories.name AS category
@@ -278,32 +281,51 @@ $images = [
     ];
     ?>
 
-    <?php foreach ($materials as $index => $material): ?>
-        <div class="popular-card">
-          <img
-                        src="<?= e(!empty($material['image_path'])
-            ? $material['image_path']
-            : ($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png')) ?>"
-                alt="<?= e($material['title']) ?>"
-          >
+<?php foreach ($materials as $index => $material): ?>
+    <div class="popular-card">
+        <img
+            src="<?= e(!empty($material['image_path'])
+                ? $material['image_path']
+                : ($images[(int)$material['id']] ?? '/pic/studyhub_assets/2026-10-23_17-46-25.png')) ?>"
+            alt="<?= e($material['title']) ?>"
+        >
 
-            <p class="category-icon <?= e($categoryClasses[$material['category']] ?? 'other') ?>">
-                <?= e($material['category']) ?>
-            </p>
+        <p class="category-icon <?= e($categoryClasses[$material['category']] ?? 'other') ?>">
+            <?= e($material['category']) ?>
+        </p>
 
-            <p><?= e($material['title']) ?></p>
+        <p><?= e($material['title']) ?></p>
 
-            <p class="second-text">
-                <?= e($material['description']) ?>
-            </p>
+        <p class="second-text">
+            <?= e($material['description']) ?>
+        </p>
+
+        <button
+            onclick="window.location.href='/html/material.php?id=<?= (int)$material['id'] ?>'"
+            class="main-btn"
+            aria-label="Открыть материал: <?= e($material['title']) ?>"
+        >⭢</button>
+        <?php if ($isAdmin): ?>
+            <button
+                type="button"
+                class="admin-card-button edit-material-button"
+                data-id="<?= (int)$material['id'] ?>"
+                data-title="<?= e($material['title']) ?>"
+                data-description="<?= e($material['description']) ?>"
+                data-category-id="<?= (int)$material['category_id'] ?>"
+                data-content="<?= e($material['content'] ?? '') ?>"
+                data-features="<?= e($material['features'] ?? '') ?>"
+            >Редактировать</button>
 
             <button
-                onclick="window.location.href='/html/material.php?id=<?= (int)$material['id'] ?>'"
-                class="main-btn"
-                aria-label="Открыть материал: <?= e($material['title']) ?>"
-            >⭢</button>
-        </div>
-    <?php endforeach; ?>
+                type="button"
+                class="admin-card-button delete-material-button"
+                data-id="<?= (int)$material['id'] ?>"
+                data-title="<?= e($material['title']) ?>"
+            >Удалить</button>
+        <?php endif; ?>
+    </div>
+<?php endforeach; ?>
     </div>
 </div>
 
@@ -348,6 +370,7 @@ $images = [
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="/js/main.js"></script>
   <script src="/js/material-create.js"></script>
+  <script src="/js/material-delete.js"></script>
   
 <script>
 (() => {

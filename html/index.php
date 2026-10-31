@@ -6,6 +6,13 @@ $isAdmin = isset($_SESSION['admin_id']);
 
 require_once __DIR__ . '/../php/db.php';
 
+$categoriesStmt = $pdo->query("
+    SELECT id, name
+    FROM categories
+    ORDER BY id
+");
+$categories = $categoriesStmt->fetchAll(PDO::FETCH_ASSOC);
+
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'search') {
     header('Content-Type: application/json; charset=utf-8');
 
@@ -44,13 +51,61 @@ $sql = "
         materials.category_id,
         materials.content,
         materials.features,
+        materials.difficulty,
+        materials.tip,
         materials.file_path,
         materials.image_path,
-        categories.name AS category
+        categories.name AS category,
+        COUNT(material_ratings.id) AS rating_count,
+        COALESCE(AVG(material_ratings.rating), 0) AS average_rating,
+
+        (
+            (
+                COUNT(material_ratings.id) /
+                (COUNT(material_ratings.id) + 3)
+            ) * COALESCE(AVG(material_ratings.rating), 0)
+            +
+            (
+                3 / (COUNT(material_ratings.id) + 3)
+            ) * COALESCE(rating_stats.global_average, 0)
+        ) AS popularity_score
+
     FROM materials
+
     JOIN categories
         ON materials.category_id = categories.id
-    ORDER BY materials.id
+
+    LEFT JOIN material_ratings
+        ON material_ratings.material_id = materials.id
+
+    CROSS JOIN (
+        SELECT AVG(rating) AS global_average
+        FROM material_ratings
+    ) AS rating_stats
+
+    GROUP BY
+        materials.id,
+        materials.title,
+        materials.description,
+        materials.category_id,
+        materials.content,
+        materials.features,
+        materials.difficulty,
+        materials.tip,
+        materials.file_path,
+        materials.image_path,
+        categories.name,
+        rating_stats.global_average
+
+		ORDER BY
+    		CASE
+        WHEN COUNT(material_ratings.id) > 0 THEN 1
+        ELSE 0
+    		END DESC,
+    		popularity_score DESC,
+    		rating_count DESC,
+    		materials.id DESC
+
     LIMIT 6
 ";
 
@@ -63,7 +118,6 @@ function e($value) {
 ?>
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,6 +130,7 @@ function e($value) {
     <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/html/materials.css">
   <title>StudyHub</title>
 </head>
 
@@ -83,9 +138,14 @@ function e($value) {
   <header>
     <div class="header-inner">
 
-      <a href="#" class="header-logo">
-        <img src="/pic/Образовательный логотип StudyHub.png" alt="StudyHub">
-      </a>
+      <div class="logo-wrapper">
+    <span class="logo-orbit orbit-one"></span>
+    <span class="logo-orbit orbit-two"></span>
+
+    <a href="/html/index.php" class="header-logo">
+        <p>Study<span>Hub</span></p>
+    </a>
+</div>
 
       <nav class="header-nav">
         <ul class="header-list">
@@ -160,31 +220,31 @@ function e($value) {
     <div class="categories-list">
 
         <a href="/html/materials.php?category=Программирование" class="categories-card">
-            <img src="/pic/studyhub_assets/icon-code.png" alt="Иконка программирования">
+            <img src="/pictures/programming.jpg" alt="Иконка программирования.Изображение с Pinterest, автор неизвестен, учебное использование">
             <p>Программирование</p>
             <p class="second-text">Материалы по программированию</p>
         </a>
 
         <a href="/html/materials.php?category=Математика" class="categories-card">
-            <img src="/pic/studyhub_assets/icon-calculator.png" alt="Иконка математики">
+            <img src="/pictures/math.jpg" alt="Иконка математики. Изображение с Pinterest, автор неизвестен, учебное использование">
             <p>Математика</p>
             <p class="second-text">Материалы по математике</p>
         </a>
 
         <a href="/html/materials.php?category=Иностранные%20языки" class="categories-card">
-            <img src="/pic/studyhub_assets/icon-language.png" alt="Иконка иностранных языков">
+            <img src="/pictures/languages.jpg" alt="Иконка иностранных языков. Изображение с Pinterest, автор неизвестен, учебное использование">
             <p>Иностранные языки</p>
             <p class="second-text">Материалы по языкам</p>
         </a>
 
         <a href="/html/materials.php?category=Экономика" class="categories-card">
-            <img src="/pic/studyhub_assets/icon-analytics.png" alt="Иконка экономики">
+            <img src="/pictures/economics.jpg" alt="Иконка экономики. Изображение с Pinterest, автор неизвестен, учебное использование">
             <p>Экономика</p>
             <p class="second-text">Материалы по экономике</p>
         </a>
 
         <a href="/html/materials.php?category=Другое" class="categories-card">
-            <img src="/pic/studyhub_assets/icon-book.png" alt="Иконка других материалов">
+            <img src="/pictures/others.jpg" alt="Иконка других материалов. Изображение с Pinterest, автор неизвестен, учебное использование">
             <p>Другое</p>
             <p class="second-text">Другие учебные материалы</p>
         </a>
@@ -195,20 +255,18 @@ function e($value) {
 
     <div class="popular-section section">
       <div class="popular-title">
-        <p class="section-title title">Популярные материалы</p>
-        <a href="/html/materials.php">Все материалы ⭢</a>
+        <p class="section-title title">Самые популярные материалы</p>
+        <a href="/html/materials.php">Все материалы <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right arrow-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></a>
       </div>
-      <?php if ($isAdmin): ?>
-    <div class="admin-add-section">
-        <button type="button" class="main-btn" id="open-material-form">
-            + Добавить материал
-        </button>
-    </div>
-    <?php endif; ?>
-    
+
 <?php if ($isAdmin): ?>
+
     <div id="material-modal" class="material-modal" hidden>
+
         <div class="material-modal-content">
+
             <button type="button" id="close-material-form" class="modal-close">
                 ✕
             </button>
@@ -216,44 +274,123 @@ function e($value) {
             <h2 id="material-form-title">Добавить материал</h2>
 
             <form id="material-create-form" enctype="multipart/form-data">
+
                 <input type="hidden" id="material-id" name="id" value="">
+
                 <label for="material-title">Название</label>
-                <input id="material-title" name="title" type="text"
-                       maxlength="200" required>
+                <input
+                    id="material-title"
+                    name="title"
+                    type="text"
+                    maxlength="200"
+                    required
+                >
 
                 <label for="material-description">Краткое описание</label>
-                <textarea id="material-description" name="description"
-                          rows="3" required></textarea>
+                <textarea
+                    id="material-description"
+                    name="description"
+                    rows="3"
+                    required
+                ></textarea>
 
                 <label for="material-category">Категория</label>
                 <select id="material-category" name="category_id" required>
                     <option value="">Выбери категорию</option>
-                    <option value="1">Программирование</option>
-                    <option value="2">Математика</option>
-                    <option value="3">Иностранные языки</option>
-                    <option value="4">Экономика</option>
-                    <option value="5">Другое</option>
+
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?= (int)$category['id'] ?>">
+                            <?= e($category['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+
+                </select>
+
+                <label for="material-difficulty">Уровень сложности</label>
+                <select id="material-difficulty" name="difficulty">
+                    <option value="">Не указан</option>
+                    <option value="Начальный">Начальный</option>
+                    <option value="Средний">Средний</option>
+                    <option value="Продвинутый">Продвинутый</option>
                 </select>
 
                 <label for="material-content">Содержание (необязательно)</label>
-                <textarea id="material-content" name="content" rows="4"></textarea>
+                <textarea
+                    id="material-content"
+                    name="content"
+                    rows="4"
+                ></textarea>
 
-                <label for="material-features">Что изучит пользователь (необязательно)</label>
-                <textarea id="material-features" name="features" rows="3"></textarea>
+                <label for="material-features">
+                    Что изучит пользователь (необязательно)
+                </label>
+                <textarea
+                    id="material-features"
+                    name="features"
+                    rows="3"
+                ></textarea>
 
-                <label for="material-cover">Обложка (JPG, PNG или WebP, до 4 МБ)</label>
-                <input id="material-cover" name="cover" type="file"
-                       accept="image/jpeg,image/png,image/webp">
+                <label for="material-tip">
+                    Полезный совет (необязательно)
+                </label>
+                <textarea
+                    id="material-tip"
+                    name="tip"
+                    rows="3"
+                ></textarea>
+
+                <label for="material-file">
+                    Учебный файл (PDF, PPT, PPTX)
+                </label>
+                <input
+                    id="material-file"
+                    name="material_file"
+                    type="file"
+                    accept=".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                >
+
+                <label for="material-url">
+                    Или ссылка на материал
+                </label>
+                <input
+                    id="material-url"
+                    name="material_url"
+                    type="url"
+                    placeholder="https://example.com/material"
+                >
+
+                <p class="second-text">
+                    Можно добавить файл или ссылку. Одновременно оба варианта не используются.
+                </p>
+
+                <label for="material-cover">
+                    Обложка (JPG, PNG или WebP, до 4 МБ)
+                </label>
+                <input
+                    id="material-cover"
+                    name="cover"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                >
 
                 <p id="material-form-message" role="status"></p>
 
-                <button type="submit" class="main-btn" id="save-material-button">
+                <button
+                    type="submit"
+                    class="main-btn"
+                    id="save-material-button"
+                >
                     Сохранить материал
                 </button>
+
             </form>
+
         </div>
+
     </div>
+
 <?php endif; ?>
+
 
     <div class="popular-list">
     <?php
@@ -289,6 +426,36 @@ $images = [
         </p>
 
         <p><?= e($material['title']) ?></p>
+        <div class="popular-rating">
+    <?php if ((int)$material['rating_count'] > 0): ?>
+        <span class="popular-rating-stars">★</span>
+
+        <strong>
+            <?= number_format(
+                (float)$material['average_rating'],
+                1,
+                ',',
+                ''
+            ) ?>/5
+        </strong>
+
+        <span class="second-text">
+            (<?= (int)$material['rating_count'] ?>
+            <?= ((int)$material['rating_count'] % 10 === 1 &&
+                (int)$material['rating_count'] % 100 !== 11)
+                ? 'оценка'
+                : (((int)$material['rating_count'] % 10 >= 2 &&
+                    (int)$material['rating_count'] % 10 <= 4 &&
+                    !((int)$material['rating_count'] % 100 >= 12 &&
+                    (int)$material['rating_count'] % 100 <= 14))
+                    ? 'оценки'
+                    : 'оценок') ?>)
+        </span>
+
+    <?php else: ?>
+        <span class="second-text">Пока нет оценок</span>
+    <?php endif; ?>
+</div>
 
         <p class="second-text">
             <?= e($material['description']) ?>
@@ -298,7 +465,9 @@ $images = [
             onclick="window.location.href='/html/material.php?id=<?= (int)$material['id'] ?>'"
             class="main-btn"
             aria-label="Открыть материал: <?= e($material['title']) ?>"
-        >⭢</button>
+        ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right arrow-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></button>
         <?php if ($isAdmin): ?>
             <button
                 type="button"
@@ -309,6 +478,9 @@ $images = [
                 data-category-id="<?= (int)$material['category_id'] ?>"
                 data-content="<?= e($material['content'] ?? '') ?>"
                 data-features="<?= e($material['features'] ?? '') ?>"
+                data-difficulty="<?= e($material['difficulty'] ?? '') ?>"
+                data-tip="<?= e($material['tip'] ?? '') ?>"
+                data-file-path="<?= e($material['file_path'] ?? '') ?>"
             >Редактировать</button>
 
             <button
@@ -326,7 +498,9 @@ $images = [
     <div class="about-section">
       <p class="section-title">Начни учиться уже сегодня!</p>
       <p>Сотни полезных материалов ждут тебя. <br> Выбери категорию и найти то, что нужно именно тебе</p>
-      <button class="about-btn" onclick="toMaterials()">Перейти к материалам ⭢</button>
+      <button class="about-btn" onclick="toMaterials()">Перейти к материалам <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right arrow-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+</svg></button>
     </div>
   </main>
 
@@ -356,7 +530,7 @@ $images = [
               d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
           </svg>
         </div>
-        <p>@2026 StudyHub. Все права защищены</p>
+        <p>@2026 StudyHub. <br> Сайт создан исключительно в учебных, некоммерческих целях в рамках производственной практики</p>
       </div>
     </div>
   </footer>
@@ -467,8 +641,4 @@ $images = [
 })();
 </script>
 </body>
-</html>
-
-</body>
-
 </html>

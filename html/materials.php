@@ -145,9 +145,14 @@ $categoryClasses = [
 
 <header>
     <div class="header-inner">
-        <a href="/html/index.php" class="header-logo">
-            <img src="/pic/Образовательный логотип StudyHub.png" alt="StudyHub">
-        </a>
+      <div class="logo-wrapper">
+    <span class="logo-orbit orbit-one"></span>
+    <span class="logo-orbit orbit-two"></span>
+
+    <a href="/html/index.php" class="header-logo">
+        <p>Study<span>Hub</span></p>
+    </a>
+</div>
 
         <nav class="header-nav">
             <ul class="header-list">
@@ -474,7 +479,7 @@ $categoryClasses = [
         </div>
 
         <div class="footer-right">
-            <p>@2026 StudyHub. Все права защищены</p>
+            <p>@2026 StudyHub.<br> Сaйт создан исключительно учебных, некоммерческих целях в рамках прозводственной практики.</p>
         </div>
 
     </div>
